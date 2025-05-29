@@ -294,6 +294,15 @@ public class ReciclajeServicio {
             nivel.getLogro().getUsuarios().add(usuario);
         }
     }***/
+    
+    public long contarDiasActivosPorUsuario(Long usuarioId) {
+        List<Reciclaje> reciclajes = reciclajeRepository.findByUsuarioId(usuarioId);
+        
+        return reciclajes.stream()
+                .map(r -> r.getFechaReciclaje().toLocalDate()) // Solo la parte de la fecha
+                .distinct()
+                .count();
+    }
 
     public List<Reciclaje> obtenerReciclajesPorUsuario(Long usuarioId) {
         return reciclajeRepository.findByUsuarioId(usuarioId);

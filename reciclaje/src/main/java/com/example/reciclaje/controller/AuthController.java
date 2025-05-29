@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.reciclaje.entidades.Reciclaje;
 import com.example.reciclaje.entidades.Usuario;
+import com.example.reciclaje.servicio.LogroServicio;
 import com.example.reciclaje.servicio.ReciclajeServicio;
 import com.example.reciclaje.servicio.UsuarioServicio;
 import com.example.reciclaje.servicioDTO.LoginRequest;
@@ -40,6 +41,7 @@ public class AuthController {
 	private final UsuarioServicio usuarioServicio;
 	private final AuthenticationManager authenticationManager;
 	private final ReciclajeServicio reciclajeServicio;
+	private  LogroServicio logroServicio;
 
 	@Autowired
 	public AuthController(UsuarioServicio usuarioServicio, AuthenticationManager authenticationManager, ReciclajeServicio reciclajeServicio) {
@@ -152,8 +154,13 @@ usuario.setTelefono(registroRequest.getTelefono());
 	@GetMapping("/dashboard")
 	 public String dashboard(Model model, Principal principal) {
 	 Usuario usuario = usuarioServicio.findByEmail(principal.getName());
+	 
 	 int logros = usuario.getUsuarioLogros().size();
 	 
+	 long totalReciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId()).size();
+	 long diasActivos = reciclajeServicio.contarDiasActivosPorUsuario(usuario.getId());
+	 
+	 Usuario usuarioActualizado = usuarioServicio.actualizarNivelUsuario(usuario);
 	 //Actualizar Puntos
 	 List<Reciclaje> reciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId()); 
      int puntos = reciclajes.stream()
@@ -166,6 +173,10 @@ usuario.setTelefono(registroRequest.getTelefono());
 	 
 	model.addAttribute("usuario", usuario);
 	model.addAttribute("logros",logros);
+	model.addAttribute("totalReciclajes", reciclajes.size());
+	model.addAttribute("diasActivos", diasActivos);
+	model.addAttribute("usuario", usuarioActualizado);
+
 	
 	return "dashboard";
 	}

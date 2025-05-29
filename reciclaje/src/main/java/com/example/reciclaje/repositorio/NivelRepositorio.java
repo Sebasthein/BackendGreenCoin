@@ -21,7 +21,7 @@ public interface NivelRepositorio extends JpaRepository<Nivel, Long> {
      * @param puntosMinimos Puntos mínimos del nivel a buscar
      * @return Nivel correspondiente
      */
-   // Optional<Nivel> findByPuntosMinimos(int puntosMinimos);
+    //Optional<Nivel> findByPuntosMinimos(int puntosMinimos);
     Optional<Nivel> findTopByPuntosRequeridosLessThanEqualOrderByPuntosRequeridosDesc(int puntos);
 
 	List<Nivel> findAllByOrderByPuntosRequeridosAsc( );

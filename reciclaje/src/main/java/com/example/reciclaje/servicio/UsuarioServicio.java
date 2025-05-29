@@ -1,5 +1,6 @@
 package com.example.reciclaje.servicio;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,23 +54,7 @@ public class UsuarioServicio {
 
     // Método para generar la URL del avatar de DiceBear
     private String generarDiceBearAvatarUrl(String seed) {
-        // La semilla debe ser una cadena de texto única para cada usuario.
-        // Se recomienda usar el ID del usuario o su email.
-        // Importante: Escapar el '%' en la URL de DiceBear con '%%' si no es un especificador de formato.
-        // La URL de DiceBear es: https://api.dicebear.com/7.x/<estilo>/svg?seed=<semilla>
-        // Si el estilo o la semilla contuvieran un '%', String.format() lo interpretaría mal.
-        // Sin embargo, en la URL base de DiceBear, el '7.x' no tiene '%'.
-        // El problema puede venir si la 'seed' o el 'DICEBEAR_STYLE' contienen un '%'.
-        // Para evitar problemas, podemos usar String.replace() o concatenación simple.
-        // Pero si insistes en String.format, la forma correcta es:
-        // return String.format("https://api.dicebear.com/7.x/%s/svg?seed=%s", DICEBEAR_STYLE, seed);
-        // El error "Format specifier '%s'" sugiere que el problema está en la cadena de formato en sí.
-        // Una forma más segura es la concatenación simple si no hay otros %s necesarios:
         return "https://api.dicebear.com/7.x/" + DICEBEAR_STYLE + "/svg?seed=" + seed;
-        // Si por alguna razón necesitas String.format y un % aparece en DICEBEAR_STYLE o seed,
-        // tendrías que escapar esos valores antes de pasarlos a String.format.
-        // Por ejemplo: String escapedSeed = seed.replace("%", "%%");
-        // Pero la concatenación es más simple y segura para este caso.
     }
 
     @Transactional
@@ -214,15 +199,48 @@ public class UsuarioServicio {
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         usuario.setPuntos(usuario.getPuntos() + puntosGanados);
-        actualizarNivel(usuario);
+        actualizarNivelUsuario(usuario);
+        verificarLogrosPorPuntos(usuarioId);
+        
 
         return usuarioRepository.save(usuario);
     }
+    
 
-    public void actualizarNivel(Usuario usuario) {
-        usuario.setNivel(obtenerNivelPorPuntos(usuario.getPuntos()));
-        usuarioRepository.save(usuario);
-    }
+	public Usuario actualizarNivelUsuario(Usuario usuario) {
+	    int puntos = usuario.getPuntos();  // Asumiendo que tienes este campo
+	    Nivel nivel = obtenerNivelPorPuntos(puntos);
+	    usuario.setNivel(nivel);
+	    usuarioRepository.save(usuario); // guarda el nivel actualizado
+	    return usuario;
+	}
+	
+	@Transactional
+	public void verificarLogrosPorPuntos(Long usuarioId) {
+	    Usuario usuario = usuarioRepository.findById(usuarioId)
+	        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    List<Logro> logros = logroRepositorio.findAll();
+	    List<UsuarioLogro> logrosActuales = usuarioLogroRepositorio.findByUsuarioId(usuarioId);
+
+	    Set<Long> idsLogrosDesbloqueados = logrosActuales.stream()
+	        .map(ul -> ul.getLogro().getId())
+	        .collect(Collectors.toSet());
+
+	    for (Logro logro : logros) {
+	        if (usuario.getPuntos() >= logro.getPuntosRequeridos() &&
+	            !idsLogrosDesbloqueados.contains(logro.getId())) {
+
+	            UsuarioLogro usuarioLogro = new UsuarioLogro();
+	            usuarioLogro.setUsuario(usuario);
+	            usuarioLogro.setLogro(logro);
+	            usuarioLogro.setFechaObtencion(LocalDateTime.now());
+
+	            usuarioLogroRepositorio.save(usuarioLogro);
+	        }
+	    }
+	}
+	
 
     public int obtenerPuntosPorEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email)
@@ -383,7 +401,7 @@ public class UsuarioServicio {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuario.getLogrosDesbloqueados().size(); // fuerza carga
         return usuario;
-    }
-    */
+    }*/
+    
     
 }

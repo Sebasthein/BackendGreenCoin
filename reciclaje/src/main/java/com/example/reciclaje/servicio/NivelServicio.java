@@ -46,6 +46,7 @@ public class NivelServicio {
 	    }
 	}
 
+
 	public List<Nivel> obtenerTodos() {
         return nivelRepository.findAll();
     }

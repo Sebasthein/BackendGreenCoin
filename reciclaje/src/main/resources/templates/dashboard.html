@@ -648,52 +648,49 @@
                                 <div class="stat-icon">
                                     <i class="fas fa-level-up-alt"></i>
                                 </div>
-                                <div class="stat-value" th:text="${usuario.nivel.nombre}">1</div>
+                               <div class="stat-value" th:text="${usuario.nivel.nombre}"></div>
                                 <div class="stat-label">Nivel Actual</div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="col-md-4 mt-3">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="stat-icon">
-                                    <i class="fas fa-recycle"></i>
-                                </div>
-                                <div class="stat-value">0</div>
-                                <div class="stat-label">Reciclajes</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mt-3">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="stat-icon">
-                                    <i class="fas fa-medal"></i>
-                                </div>
-                                <div class="stat-value" th:text="${logros}">1</div>
-                                <div th:href="@{/logros}" class="stat-label">Logros</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 mt-3">
-                        <div class="card stats-card h-100">
-                            <div class="card-body">
-                                <div class="stat-icon">
-                                    <i class="fas fa-calendar-check"></i>
-                                </div>
-                                <div class="stat-value">1</div>
-                                <div class="stat-label">Día activo</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
+
+					<div class="col-md-4 mt-3">
+						<div class="card stats-card h-100">
+							<div class="card-body">
+								<div class="stat-icon">
+									<i class="fas fa-recycle"></i>
+								</div>
+								<div class="stat-value" th:text="${totalReciclajes}">0</div>
+								<div class="stat-label">Reciclajes</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-4 mt-3">
+						<div class="card stats-card h-100">
+							<div class="card-body">
+								<div class="stat-icon">
+									<i class="fas fa-medal"></i>
+								</div>
+								<div class="stat-value" th:text="${logros}">1</div>
+								<a th:href="@{/logros}" class="stat-label">Logros</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-4 mt-3">
+						<div class="card stats-card h-100">
+							<div class="card-body">
+								<div class="stat-icon">
+									<i class="fas fa-calendar-check"></i>
+								</div>
+								<div class="stat-value" th:text="${diasActivos}">1</div>
+								<div class="stat-label">Días activos</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row mt-4">
             <div class="col-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-body">

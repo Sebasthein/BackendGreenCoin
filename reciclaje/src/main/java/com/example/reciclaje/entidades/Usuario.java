@@ -135,7 +135,8 @@ public class Usuario implements UserDetails {
     }
 
 
-
+//metodo logro 
+    
    
 
 }
