@@ -26,19 +26,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	 private final UsuarioRepositorio usuarioRepository;
 
-	    @Override
-	    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-	        Usuario usuario = usuarioRepository.findByEmail(email)
-	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
-	        
-	        return new org.springframework.security.core.userdetails.User(
-	            usuario.getEmail(),
-	            usuario.getPassword(),
-	            usuario.getUsuarioRoles().stream()
-	            .map(usuarioRol -> new SimpleGrantedAuthority("ROLE_" + usuarioRol.geRol().getNombre()))
-	                .collect(Collectors.toList())
-	        );
-	    }
+	 @Override
+	 public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	     Usuario usuario = usuarioRepository.findByEmail(email)
+	         .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+
+	     // Obtener los authorities (roles)
+	     Collection<? extends GrantedAuthority> authorities = usuario.getUsuarioRoles().stream()
+	         .map(usuarioRol -> new SimpleGrantedAuthority("ROLE_" + usuarioRol.geRol().getNombre()))
+	         .collect(Collectors.toList());
+
+	     // Retornar CustomUserDetails con el usuario completo y authorities
+	     return new CustomUserDetails(usuario, authorities);
+	 }
+	
 
     private Collection<? extends GrantedAuthority> getAuthorities(Set<Rol> roles) {
         return roles.stream()

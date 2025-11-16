@@ -51,6 +51,9 @@ public class Reciclaje {
 	    private boolean validado = false;
 
 	    private LocalDateTime fechaValidacion;
+	    
+	    
+	    
 
 
 	 

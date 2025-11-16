@@ -1,6 +1,7 @@
 package com.example.reciclaje.controller;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -44,5 +45,26 @@ public class DashboardController {
 	    
 
 	        return "dashboard"; // Vista: src/main/resources/templates/dashboard.html
+	    }
+	    
+	    @GetMapping("/api/dashboard")
+	    public ResponseEntity<Map<String, Object>> getDashboardData(Authentication authentication) {
+	        Map<String, Object> response = new HashMap<>();
+	        
+	        System.out.println("=== DASHBOARD API CALLED ===");
+	        System.out.println("Authentication: " + authentication);
+	        System.out.println("Is Authenticated: " + (authentication != null && authentication.isAuthenticated()));
+	        
+	        if (authentication == null || !authentication.isAuthenticated()) {
+	            response.put("success", false);
+	            response.put("error", "No autenticado");
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	        }
+	        
+	        // Tu lógica del dashboard aquí...
+	        response.put("success", true);
+	        response.put("message", "Dashboard data");
+	        
+	        return ResponseEntity.ok(response);
 	    }
 }

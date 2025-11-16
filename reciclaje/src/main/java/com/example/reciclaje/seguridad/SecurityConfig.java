@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.reciclaje.servicio.UserDetailsServiceImpl;
 
@@ -37,6 +38,7 @@ public class SecurityConfig {
 	            AuthenticationConfiguration authenticationConfiguration) throws Exception {
 	        return authenticationConfiguration.getAuthenticationManager();
 	    }
+	    
 	  
 	    
 	 
@@ -45,7 +47,7 @@ public class SecurityConfig {
 	        http
 	            .csrf(csrf -> csrf.disable())
 	            .authorizeHttpRequests(auth -> auth
-	                .requestMatchers("/login", "/registro","/api/**","/api/usuarios/registro", "/css/**", "/js/**","/img/**", "/plugins/**").permitAll() // Permitir acceso a estas rutas
+	                .requestMatchers("/api/auth/login","/login", "/registro","/api/**","/api/usuarios/registro", "/css/**", "/js/**","/img/**", "/plugins/**").permitAll() // Permitir acceso a estas rutas
 	                .requestMatchers("/admin/**").hasRole("ADMIN")
 	                .anyRequest().authenticated() // El resto requiere autenticación
 	            )
@@ -66,13 +68,20 @@ public class SecurityConfig {
 	                    .logoutSuccessUrl("/login?logout=true")
 	                    .permitAll()
 	                );
-
+	        
+	     // Agregar el filtro JWT para validar el token en cada petición REST protegida
+	        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+	        
 	            return http.build();
 	    }
 
 	    @Bean
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder();
+	    }
+	    @Bean
+	    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+	        return new JwtAuthenticationFilter();
 	    }
 	    
 	    

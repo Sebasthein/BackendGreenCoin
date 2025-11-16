@@ -75,6 +75,8 @@ public class Usuario implements UserDetails {
 
     @OneToMany(mappedBy = "usuario")
     private Set<UsuarioLogro> usuarioLogros = new HashSet<>();
+    
+   
 
     
 
@@ -135,8 +137,6 @@ public class Usuario implements UserDetails {
     }
 
 
-//metodo logro 
-    
    
 
 }

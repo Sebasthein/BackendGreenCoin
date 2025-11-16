@@ -307,6 +307,8 @@ public class UsuarioServicio {
             .map(UsuarioLogro::getLogro)
             .collect(Collectors.toList());
     }
+    
+   
     /**
      * Desbloquea un logro para un usuario si no lo tiene ya
      * @param usuarioId ID del usuario

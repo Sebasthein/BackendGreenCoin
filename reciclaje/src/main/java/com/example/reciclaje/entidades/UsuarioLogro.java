@@ -1,6 +1,8 @@
 package com.example.reciclaje.entidades;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,5 +39,6 @@ public class UsuarioLogro {
     @JoinColumn(name = "logro_id")
     private Logro logro;
   
+    
 
 }

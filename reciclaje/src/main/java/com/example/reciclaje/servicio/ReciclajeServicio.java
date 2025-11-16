@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.reciclaje.entidades.*;
 import com.example.reciclaje.repositorio.*;
+import com.example.reciclaje.servicioDTO.ActividadDTO;
 import com.example.reciclaje.servicioDTO.MaterialScanResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -281,19 +282,7 @@ public class ReciclajeServicio {
         }
     }
 
-    /**
-     * Verifica y añade logros al usuario.
-     */
-  /*  private void verificarLogrosNuevoNivel(Usuario usuario, Nivel nivel) {
-        if (nivel.getLogro() != null && !usuario.getLogrosDesbloqueados().contains(nivel.getLogro())) {
-            usuario.getLogrosDesbloqueados().add(nivel.getLogro());
-            // No guardar usuario aquí, se guarda al final de la transacción de validación
-            // Aquí podrías agregar notificación al usuario
-            
-            // Mantén la relación bidireccional actualizada
-            nivel.getLogro().getUsuarios().add(usuario);
-        }
-    }***/
+  
     
     public long contarDiasActivosPorUsuario(Long usuarioId) {
         List<Reciclaje> reciclajes = reciclajeRepository.findByUsuarioId(usuarioId);
@@ -304,6 +293,15 @@ public class ReciclajeServicio {
                 .count();
     }
 
+    public List<ActividadDTO> obtenerHistorialDelUsuario(Long usuarioId) {
+        List<Reciclaje> reciclajes = reciclajeRepository.findByUsuarioId(usuarioId);
+        
+        return reciclajes.stream().map(r -> new ActividadDTO(
+                r.getMaterial().getNombre(),
+                r.getCantidad(),
+                r.getFechaReciclaje()
+        )).toList();
+    }
     public List<Reciclaje> obtenerReciclajesPorUsuario(Long usuarioId) {
         return reciclajeRepository.findByUsuarioId(usuarioId);
     }

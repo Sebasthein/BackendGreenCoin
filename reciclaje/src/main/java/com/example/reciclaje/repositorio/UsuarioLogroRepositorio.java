@@ -19,4 +19,6 @@ public interface UsuarioLogroRepositorio extends JpaRepository<UsuarioLogro, Lon
     
     @Query("SELECT ul FROM UsuarioLogro ul JOIN FETCH ul.logro WHERE ul.usuario.id = :usuarioId")
     List<UsuarioLogro> findFullByUsuarioId(@Param("usuarioId") Long usuarioId);
+    
+    Long countByUsuarioId(Long usuarioId);
 }

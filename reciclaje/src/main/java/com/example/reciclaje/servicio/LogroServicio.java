@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ import com.example.reciclaje.entidades.UsuarioLogro;
 import com.example.reciclaje.repositorio.LogroRepositorio;
 import com.example.reciclaje.repositorio.UsuarioLogroRepositorio;
 import com.example.reciclaje.repositorio.UsuarioRepositorio;
+import com.example.reciclaje.servicioDTO.LogroDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -104,6 +106,7 @@ public class LogroServicio {
 	                            .map(UsuarioLogro::getLogro)
 	                            .collect(Collectors.toList());
 	    }
+
 	    
 	    
 	    

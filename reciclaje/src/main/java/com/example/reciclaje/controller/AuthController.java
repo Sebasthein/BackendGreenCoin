@@ -1,14 +1,19 @@
 package com.example.reciclaje.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.naming.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,11 +29,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.reciclaje.entidades.Logro;
 import com.example.reciclaje.entidades.Reciclaje;
 import com.example.reciclaje.entidades.Usuario;
+import com.example.reciclaje.repositorio.UsuarioLogroRepositorio;
+import com.example.reciclaje.repositorio.UsuarioRepositorio;
+import com.example.reciclaje.seguridad.CustomUserDetails;
+import com.example.reciclaje.seguridad.JwtUtil;
 import com.example.reciclaje.servicio.LogroServicio;
 import com.example.reciclaje.servicio.ReciclajeServicio;
 import com.example.reciclaje.servicio.UsuarioServicio;
+import com.example.reciclaje.servicioDTO.ActividadDTO;
 import com.example.reciclaje.servicioDTO.LoginRequest;
 import com.example.reciclaje.servicioDTO.RegistroRequest;
 import com.example.reciclaje.servicioDTO.UsuarioDTO;
@@ -38,16 +49,66 @@ import jakarta.validation.Valid;
 @Controller
 public class AuthController {
 
+	private final JwtUtil jwtUtil; // Necesitarás actualizar el constructor o usar @RequiredArgsConstructor
 	private final UsuarioServicio usuarioServicio;
 	private final AuthenticationManager authenticationManager;
 	private final ReciclajeServicio reciclajeServicio;
-	private  LogroServicio logroServicio;
+	@Autowired
+	private  UsuarioLogroRepositorio usuariologroReposiotry;
+	private   LogroServicio logroServicio;
 
 	@Autowired
-	public AuthController(UsuarioServicio usuarioServicio, AuthenticationManager authenticationManager, ReciclajeServicio reciclajeServicio) {
+	public AuthController(UsuarioServicio usuarioServicio, AuthenticationManager authenticationManager, ReciclajeServicio reciclajeServicio, JwtUtil jwtUtil) {
 		this.usuarioServicio = usuarioServicio;
 		this.authenticationManager = authenticationManager;
 		this.reciclajeServicio = reciclajeServicio;
+		this.jwtUtil = jwtUtil;
+		
+	}
+	
+	// Nuevo Endpoint REST para MAUI
+	@PostMapping("/api/auth/login")
+	public ResponseEntity<Map<String, Object>> autenticarApi(@Valid @RequestBody LoginRequest loginRequest) {
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        // 1. Autenticar usando las credenciales
+	        Authentication authentication = authenticationManager.authenticate(
+	                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+	        
+	        // ✅✅✅ LÍNEA CRÍTICA QUE FALTA - ESTABLECER CONTEXTO DE SEGURIDAD ✅✅✅
+	        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+	        // 2. Generar el Token JWT
+	        String token = jwtUtil.generateToken(authentication);
+
+	        // 3. Obtener los datos del usuario para el DTO
+	        Usuario usuario = usuarioServicio.findByEmail(loginRequest.getEmail());
+	        
+	        // 4. Construir la respuesta JSON para MAUI
+	        UsuarioDTO usuarioDto = new UsuarioDTO(usuario);
+	        
+	        response.put("success", true);
+	        response.put("token", token);
+	        response.put("usuario", usuarioDto);
+	        response.put("message", "Login exitoso");
+	        
+	        System.out.println("✅✅✅ LOGIN EXITOSO - Usuario: " + usuario.getEmail());
+	        System.out.println("✅✅✅ Contexto de seguridad establecido para: " + authentication.getName());
+
+	        return ResponseEntity.ok(response);
+
+	    } catch (BadCredentialsException e) {
+	        response.put("success", false);
+	        response.put("error", "Credenciales inválidas.");
+	        System.out.println("❌❌❌ CREDENCIALES INVÁLIDAS: " + loginRequest.getEmail());
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("error", "Error interno: " + e.getMessage());
+	        System.out.println("❌❌❌ ERROR EN LOGIN: " + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
 	}
 
 	// 👉 Mostrar formulario de login
@@ -59,16 +120,24 @@ public class AuthController {
 
 	// 👉 Procesar inicio de sesión
 	@PostMapping("/login")
-	public String procesarLogin(@ModelAttribute("loginRequest") LoginRequest loginRequest, Model model) {
-		try {
-			Authentication auth = authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-			SecurityContextHolder.getContext().setAuthentication(auth);
-			return "redirect:/dashboard";
-		} catch (Exception e) {
-			model.addAttribute("error", "Credenciales inválidas");
-			return "login";
-		}
+	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+	    try {
+	        Authentication authentication = authenticationManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+	        );
+	        
+	        SecurityContextHolder.getContext().setAuthentication(authentication);
+	        
+	        // Ahora puedes obtener CustomUserDetails
+	        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+	        Usuario usuario = userDetails.getUsuario(); // Obtienes tu entidad Usuario completa
+	        
+	        // Retorna la respuesta con los datos del usuario
+	        return ResponseEntity.ok(usuario);
+	        
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Error en login: " + e.getMessage());
+	    }
 	}
 
 	// 👉 Mostrar formulario de registro
@@ -153,32 +222,57 @@ usuario.setTelefono(registroRequest.getTelefono());
 	// 👉 Página principal después del login
 	@GetMapping("/dashboard")
 	 public String dashboard(Model model, Principal principal) {
-	 Usuario usuario = usuarioServicio.findByEmail(principal.getName());
-	 
-	 int logros = usuario.getUsuarioLogros().size();
-	 
-	 long totalReciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId()).size();
-	 long diasActivos = reciclajeServicio.contarDiasActivosPorUsuario(usuario.getId());
-	 
-	 Usuario usuarioActualizado = usuarioServicio.actualizarNivelUsuario(usuario);
-	 //Actualizar Puntos
-	 List<Reciclaje> reciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId()); 
-     int puntos = reciclajes.stream()
-             .mapToInt(Reciclaje::getPuntosGanados)
-             .sum();
-	 
-	 usuarioServicio.agregarPuntos(usuario.getId(),puntos);
-	 //System.out.println(usuario.toString());
-	 // Convertir a DTO si es necesario o pasar la entidad directamente
-	 
-	model.addAttribute("usuario", usuario);
-	model.addAttribute("logros",logros);
-	model.addAttribute("totalReciclajes", reciclajes.size());
-	model.addAttribute("diasActivos", diasActivos);
-	model.addAttribute("usuario", usuarioActualizado);
+		 Usuario usuario = usuarioServicio.findByEmail(principal.getName());
+		
 
-	
-	return "dashboard";
+		
+		    // Obtener reciclajes del usuario
+		    List<Reciclaje> reciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId());
+
+		    // Calcular puntos totales obtenidos por reciclajes
+		    int puntos = reciclajes.stream()
+		            .mapToInt(Reciclaje::getPuntosGanados)
+		            .sum();
+
+		   
+		    // Actualizar nivel y puntos del usuario
+		    Usuario usuarioActualizado = usuarioServicio.actualizarNivelUsuario(usuario);
+		    usuarioServicio.agregarPuntos(usuario.getId(), puntos);
+
+		    // Obtener otros datos para el dashboard
+		    long totalReciclajes = reciclajes.size();
+		    long diasActivos = reciclajeServicio.contarDiasActivosPorUsuario(usuario.getId());
+		    Long cantidadLogros = usuariologroReposiotry.countByUsuarioId(usuario.getId());
+
+		    // Crear lista de actividades recientes a mostrar
+		    List<ActividadDTO> actividadesRecientes = reciclajes.stream()
+		        .map(r -> new ActividadDTO(
+		            "Reciclaje de " + r.getMaterial().getNombre() + " (" + r.getCantidad() + " unidades)",
+		            r.getPuntosGanados(),
+		            r.getFechaReciclaje()
+		        ))
+		        .sorted((a, b) -> b.getFecha().compareTo(a.getFecha()))
+		        .toList();
+
+		    
+		  
+
+		    // Crear lista final con registro + reciclajes
+		    List<ActividadDTO> actividades = new ArrayList<>();
+		    
+		   
+		    actividades.addAll(actividadesRecientes);
+
+		    // Agregar atributos al modelo
+		    model.addAttribute("logros", cantidadLogros);
+		    model.addAttribute("totalReciclajes", totalReciclajes);
+		    model.addAttribute("diasActivos", diasActivos);
+		    model.addAttribute("usuario", usuarioActualizado);
+		    model.addAttribute("actividadesRecientes", actividades);
+		   
+
+		    return "dashboard";
+		    
 	}
 
 	// 👉 Página de acceso denegado

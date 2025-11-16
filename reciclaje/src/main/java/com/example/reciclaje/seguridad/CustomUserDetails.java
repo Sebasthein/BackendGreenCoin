@@ -20,16 +20,20 @@ public class CustomUserDetails implements UserDetails {
 	private Collection<? extends GrantedAuthority> authorities;
 
 	    // Constructor
-	    public CustomUserDetails(String email, String password, Collection<? extends GrantedAuthority> authorities) {
-	    	this.id = id;
-	    	this.email = email;
-	        this.password = password;
-	        this.authorities = authorities;
-	    }
-	    
-	    // ✅ Método getter que necesitas
+	   
+	     
+	public CustomUserDetails(Usuario usuario, Collection<? extends GrantedAuthority> authorities) {
+        this.usuario = usuario;
+        this.email = usuario.getEmail();
+        this.password = usuario.getPassword();
+        this.authorities = authorities;
+    }
+
+
+
+		// ✅ Método getter que necesitas
 	    public Long getId() {
-	        return id;
+	        return usuario != null ? usuario.getId() : null;
 	    }
 	    
 	    @Override
@@ -65,5 +69,10 @@ public class CustomUserDetails implements UserDetails {
 	    @Override
 	    public boolean isEnabled() {
 	        return true;  // Para indicar que la cuenta está habilitada
+	    }
+	    
+	    // Método para obtener el usuario completo
+	    public Usuario getUsuario() {
+	        return usuario;
 	    }
 }

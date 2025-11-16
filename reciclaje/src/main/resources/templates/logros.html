@@ -256,12 +256,7 @@
 				
                 <div class="point-label">Puntos totales</div>
             </div>
-            <div class="point-item">
-                <div class="point-value" th:text="${usuario.nivel.nombre}">5</div>
-
-                <div class="point-value" th:text="${puntosTotales} + ' pts'">350 pts</div>
-                <div class="point-label">Puntos totales</div>
-            </div>
+            
             <div class="point-item">
                 <div class="point-value" th:text="${nivelActual}">5</div>
 
@@ -368,21 +363,17 @@
     
     <!-- Navegación inferior -->
     <div class="eco-nav">
-        <a href="/inicio" class="nav-item">
+        <a href="/dashboard" class="nav-item">
             <i class="fas fa-home"></i>
             Inicio
         </a>
-        <a href="/reciclar" class="nav-item">
+        <a href="/reciclaje" class="nav-item">
             <i class="fas fa-recycle"></i>
             Reciclar
         </a>
         <a href="/logros" class="nav-item active">
             <i class="fas fa-trophy"></i>
             Logros
-        </a>
-        <a href="/perfil" class="nav-item">
-            <i class="fas fa-user"></i>
-            Perfil
         </a>
     </div>
 

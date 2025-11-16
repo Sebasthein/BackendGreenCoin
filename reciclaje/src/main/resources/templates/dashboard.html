@@ -5,33 +5,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | GreenCoin</title>
+    <title>Dashboard | EcoTrack</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #00C853;
-            --secondary-color: #64DD17;
-            --accent-color: #B2FF59;
-            --dark-color: #009624;
-            --light-color: #E8F5E9;
+            --primary-color: #10B981;
+            --secondary-color: #34D399;
+            --accent-color: #6EE7B7;
+            --dark-color: #047857;
+            --light-color: #D1FAE5;
             --gradient-green: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
-            --sidebar-width: 280px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 260px;
             --navbar-height: 70px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB;
+            color: #111827;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -45,10 +46,11 @@
             top: 0;
             z-index: 1030;
             height: var(--navbar-height);
+            border-bottom: 1px solid #E5E7EB;
         }
         
         .navbar-brand {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Manrope', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
             color: var(--primary-color) !important;
@@ -72,7 +74,7 @@
             transition: var(--transition);
             z-index: 1020;
             padding: 1.5rem 0;
-            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            border-right: 1px solid #E5E7EB;
         }
         
         .sidebar-collapsed {
@@ -80,28 +82,30 @@
         }
         
         .sidebar-link {
-            color: #555;
-            padding: 0.8rem 1.5rem;
-            margin: 0.3rem 1rem;
+            color: #4B5563;
+            padding: 0.75rem 1.5rem;
+            margin: 0.25rem 1rem;
             border-radius: 8px;
             display: flex;
             align-items: center;
             transition: var(--transition);
             text-decoration: none;
             font-weight: 500;
+            font-size: 0.95rem;
         }
         
         .sidebar-link:hover, .sidebar-link.active {
             background: var(--light-color);
-            color: var(--primary-color);
+            color: var(--dark-color);
             transform: translateX(5px);
         }
         
         .sidebar-link i {
-            width: 25px;
+            width: 24px;
             text-align: center;
             margin-right: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            color: var(--primary-color);
         }
         
         /* Main Content */
@@ -110,7 +114,7 @@
             padding: 2rem;
             min-height: calc(100vh - var(--navbar-height));
             transition: var(--transition);
-            background-color: #f8f9fa;
+            background-color: #F9FAFB;
         }
         
         .main-content-expanded {
@@ -126,18 +130,20 @@
             margin-bottom: 1.5rem;
             overflow: hidden;
             background: white;
+            border: 1px solid #E5E7EB;
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-md);
         }
         
         .card-header {
             background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #E5E7EB;
             font-weight: 600;
-            color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 1rem 1.5rem;
         }
         
         /* Welcome Card */
@@ -221,6 +227,7 @@
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 0.5rem;
+            font-size: 1.2rem;
         }
         
         .profile-role {
@@ -255,7 +262,7 @@
         
         .stat-label {
             font-size: 0.9rem;
-            color: #666;
+            color: #6B7280;
         }
         
         /* Activity Items */
@@ -263,7 +270,7 @@
             display: flex;
             align-items: center;
             padding: 1rem 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #E5E7EB;
             transition: var(--transition);
         }
         
@@ -272,7 +279,7 @@
         }
         
         .activity-item:hover {
-            background-color: #f9f9f9;
+            background-color: #F9FAFB;
         }
         
         .activity-icon {
@@ -294,7 +301,7 @@
             transition: var(--transition);
             padding: 1.2rem 0.5rem;
             border-radius: 10px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
         }
         
         .badge-card:hover {
@@ -312,11 +319,12 @@
         .badge-name {
             font-weight: 500;
             margin-bottom: 0.3rem;
+            font-size: 0.9rem;
         }
         
         .badge-date {
             font-size: 0.8rem;
-            color: #777;
+            color: #6B7280;
         }
         
         .locked-badge {
@@ -337,7 +345,7 @@
         
         .btn-green:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 200, 83, 0.3);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
             color: white;
         }
         
@@ -358,6 +366,7 @@
             margin-bottom: 1.5rem;
             position: relative;
             padding-bottom: 0.8rem;
+            font-size: 1.25rem;
         }
         
         .section-title:after {
@@ -402,7 +411,7 @@
         
         @media (max-width: 768px) {
             .section-title {
-                font-size: 1.3rem;
+                font-size: 1.15rem;
             }
             
             .navbar {
@@ -444,34 +453,166 @@
         }
         
         /* Alertas */
-.alert {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    z-index: 1100;
-    min-width: 300px;
-    box-shadow: var(--shadow-md);
-    border: none;
-    animation: slideIn 0.3s ease-out forwards;
-}
+        .alert {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1100;
+            min-width: 300px;
+            box-shadow: var(--shadow-md);
+            border: none;
+            animation: slideIn 0.3s ease-out forwards;
+            border-radius: 8px;
+        }
 
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
 
-.alert .btn-close {
-    padding: 0.75rem;
-}
+        .alert .btn-close {
+            padding: 0.75rem;
+        }
 
-/* Animación para cerrar */
-.fade-out {
-    animation: fadeOut 0.3s ease-out forwards;
-}
+        /* Animación para cerrar */
+        .fade-out {
+            animation: fadeOut 0.3s ease-out forwards;
+        }
 
-@keyframes fadeOut {
-    to { opacity: 0; transform: translateY(-20px); }
-}
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        /* Estilos para el modal mejorado */
+        .modal-backdrop.show {
+            opacity: 0.5 !important;
+            z-index: 1040;
+        }
+        
+        .modal {
+            z-index: 1050;
+        }
+        
+        .modal-dialog {
+            z-index: 1060;
+            margin: 1.75rem auto;
+            max-width: 800px;
+        }
+        
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #E5E7EB;
+            border-radius: 12px 12px 0 0 !important;
+            background: var(--gradient-green);
+            color: white;
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #E5E7EB;
+            padding: 1rem 1.5rem;
+        }
+        
+        /* Formularios */
+        .form-control, .form-select {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        /* Progress bars */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #E5E7EB;
+        }
+        
+        .progress-bar {
+            background-color: var(--primary-color);
+        }
+        
+        /* QR Placeholder */
+        .qr-placeholder {
+            background-color: #F3F4F6;
+            border: 2px dashed #D1D5DB;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .qr-placeholder:hover {
+            background-color: #E5E7EB;
+        }
+        
+        /* Tablas */
+        .table {
+            border-color: #E5E7EB;
+        }
+        
+        .table thead th {
+            background-color: #F9FAFB;
+            color: var(--dark-color);
+            font-weight: 600;
+            border-bottom-width: 1px;
+        }
+        
+        /* Tooltips */
+        .tooltip-inner {
+            background-color: var(--dark-color);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, 
+        .bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: var(--dark-color);
+        }
+        
+        /* Custom checkbox */
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        /* Input group */
+        .input-group-text {
+            background-color: #F9FAFB;
+            border-color: #E5E7EB;
+        }
+        
+        /* Custom file input */
+        .form-file-button {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .form-file-button:hover {
+            background-color: var(--dark-color);
+        }
     </style>
 </head>
 <body>
@@ -492,7 +633,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser">
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProfileModal"><i class="fas fa-user-cog me-2"></i> Perfil</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
+                        
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post">
@@ -509,60 +650,53 @@
 
     <div class="sidebar fade-in">
         <a href="#" class="sidebar-link active">
-            <i class="fas fa-home"></i> Home
+            <i class="fas fa-home"></i> Inicio
         </a>
+        
         <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#editProfileModal">
             <i class="fas fa-user"></i> Mi Perfil
-        </a> <a th:href="@{/reciclaje}" class="sidebar-link"> <i
-			class="fas fa-recycle"></i> Reciclaje
-		</a> <a th:href="@{/api/logros}" class="sidebar-link">
+        </a>
+        <a th:href="@{/reciclaje}" class="sidebar-link">
+            <i class="fas fa-recycle"></i> Reciclaje
+        </a>
+        <a th:href="@{/api/logros}" class="sidebar-link">
             <i class="fas fa-trophy"></i> Logros
         </a>
-        <a href="#" class="sidebar-link">
-            <i class="fas fa-chart-line"></i> Estadísticas
-        </a>
-        <a href="#" class="sidebar-link">
+        <a th:href="@{/historial}" class="sidebar-link">
             <i class="fas fa-history"></i> Historial
-        </a>
-        <a href="#" class="sidebar-link">
-            <i class="fas fa-store"></i> Tienda
-        </a>
-        <a href="#" class="sidebar-link">
-            <i class="fas fa-cog"></i> Configuración
         </a>
     </div>
     
     <div class="main-content fade-in">
-    
-    <!-- Mensajes de éxito/error -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i>
-        <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
         <div class="card welcome-card mb-4 border-0">
             <div class="card-body text-white position-relative" style="z-index: 1;">
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <h4 class="fw-bold mb-3">
                             <i class="fas fa-leaf me-2"></i> 
-                            ¡Bienvenido, <span th:text="${usuario.nombre}"></span>!
+                            ¡Bienvenido de nuevo, <span th:text="${usuario.nombre}"></span>!
                         </h4>
                         <p class="mb-0">
-                            Gracias por unirte a GreenCoin. Comienza tu viaje ecológico ahora.
-                            <span class="fw-bold">Tienes 100 puntos de bienvenida.</span>
+                            Estás contribuyendo a un planeta más verde. Continúa con tus acciones ecológicas.
+                            <span class="fw-bold">Tienes <span th:text="${usuario.puntos}"></span> puntos acumulados.</span>
                         </p>
                     </div>
                     <div class="col-md-4 text-md-end">
                         <button class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-gift me-1"></i> Reclamar puntos
+                            <i class="fas fa-gift me-1"></i> Ver recompensas
                         </button>
                     </div>
                 </div>
@@ -570,6 +704,7 @@
         </div>
         
         <div class="row">
+            <!-- Columna izquierda - Perfil y QR -->
             <div class="col-lg-3 col-md-6">
                 <div class="card profile-card shadow-sm">
                     <div class="card-body">
@@ -581,13 +716,13 @@
                             </label>
                         </div>
                         <h5 class="profile-name" th:text="${usuario.nombre}"></h5>
-                        <span class="profile-role">Nuevo miembro</span>
+                        <span class="profile-role">Nivel <span th:text="${usuario.nivel.nombre}"></span></span>
                         <p class="small text-muted mb-3" th:if="${usuario.direccion}">
                             <i class="fas fa-map-marker-alt me-1"></i> 
                             <span th:text="${usuario.direccion}"></span>
                         </p>
                         <button class="btn btn-outline-green btn-sm w-100" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            <i class="fas fa-edit me-1"></i> Completar perfil
+                            <i class="fas fa-edit me-1"></i> Editar perfil
                         </button>
                     </div>
                 </div>
@@ -608,14 +743,15 @@
                             </div>
                         </div>
 
-						<button class="btn-green btn-sm w-100 mt-2"
-							onclick="location.href='/reciclaje'">
-							<i class="fas fa-recycle me-1"></i> Primer reciclaje
-						</button>
-					</div>
+                        <button class="btn-green btn-sm w-100 mt-2"
+                            onclick="location.href='/reciclaje'">
+                            <i class="fas fa-recycle me-1"></i> Registrar reciclaje
+                        </button>
+                    </div>
                 </div>
             </div>
             
+            <!-- Columna derecha - Estadísticas y actividad -->
             <div class="col-lg-9 col-md-6">
                 <div class="row">
                     <div class="col-md-4">
@@ -648,121 +784,120 @@
                                 <div class="stat-icon">
                                     <i class="fas fa-level-up-alt"></i>
                                 </div>
-                               <div class="stat-value" th:text="${usuario.nivel.nombre}"></div>
+                                <div class="stat-value" th:text="${usuario.nivel.nombre}"></div>
                                 <div class="stat-label">Nivel Actual</div>
                             </div>
                         </div>
                     </div>
 
-					<div class="col-md-4 mt-3">
-						<div class="card stats-card h-100">
-							<div class="card-body">
-								<div class="stat-icon">
-									<i class="fas fa-recycle"></i>
-								</div>
-								<div class="stat-value" th:text="${totalReciclajes}">0</div>
-								<div class="stat-label">Reciclajes</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-md-4 mt-3">
-						<div class="card stats-card h-100">
-							<div class="card-body">
-								<div class="stat-icon">
-									<i class="fas fa-medal"></i>
-								</div>
-								<div class="stat-value" th:text="${logros}">1</div>
-								<a th:href="@{/logros}" class="stat-label">Logros</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-md-4 mt-3">
-						<div class="card stats-card h-100">
-							<div class="card-body">
-								<div class="stat-icon">
-									<i class="fas fa-calendar-check"></i>
-								</div>
-								<div class="stat-value" th:text="${diasActivos}">1</div>
-								<div class="stat-label">Días activos</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row mt-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fas fa-history me-2"></i> Actividad Reciente
-                        </h5>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-user-plus"></i>
+                    <div class="col-md-4 mt-3">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="stat-icon">
+                                    <i class="fas fa-recycle"></i>
+                                </div>
+                                <div class="stat-value" th:text="${totalReciclajes}">0</div>
+                                <div class="stat-label">Reciclajes</div>
                             </div>
-                            <div>
-                                <div class="fw-bold">Registro completado</div>
-                                <small class="text-muted">+100 puntos | Hoy</small>
-                            </div>
-                            <span class="badge bg-success ms-auto">+100</span>
                         </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-gift"></i>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="stat-icon">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                                <div class="stat-value" th:text="${logros}">1</div>
+                                <a th:href="@{/logros}" class="stat-label">Logros</a>
                             </div>
-                            <div>
-                                <div class="fw-bold">Bienvenida a GreenCoin</div>
-                                <small class="text-muted">+100 puntos | Hoy</small>
-                            </div>
-                            <span class="badge bg-success ms-auto">+100</span>
                         </div>
-                        
-                        <div class="text-center mt-3">
-                            <a href="#" class="text-success small">
-                                <i class="fas fa-arrow-down me-1"></i> Ver todo el historial
-                            </a>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <div class="card stats-card h-100">
+                            <div class="card-body">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-value" th:text="${diasActivos}">1</div>
+                                <div class="stat-label">Días activos</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="section-title">
-                            <i class="fas fa-trophy me-2"></i> Mis Logros
-                        </h5>
-                        <p class="small text-muted">Has desbloqueado 1 de 15 logros</p>
-                        
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <div class="badge-card">
-                                    <div class="badge-icon">
-                                        <i class="fas fa-user-plus"></i>
+
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="section-title">
+                                    <i class="fas fa-history me-2"></i> Actividad Reciente
+                                </h5>
+
+                                <div id="actividades-container"
+                                    style="max-height: 200px; overflow: hidden; transition: max-height 0.5s ease;">
+                                    <div th:each="actividad : ${actividadesRecientes}"
+                                        class="activity-item d-flex align-items-center mb-3">
+                                        <div class="activity-icon me-3">
+                                            <i class="fas fa-recycle"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${actividad.descripcion}">Descripción</div>
+                                            <small class="text-muted"
+                                                th:text="'+' + ${actividad.puntos} + ' puntos | ' + ${#temporals.format(actividad.fecha, 'dd/MM/yyyy')}">
+                                                +100 puntos | Hoy </small>
+                                        </div>
+                                        <span class="badge bg-success ms-auto"
+                                            th:text="'+' + ${actividad.puntos}">+100</span>
                                     </div>
-                                    <div class="badge-name">Nuevo Miembro</div>
-                                    <div class="badge-date">Hoy</div>
                                 </div>
-                            </div>
-                            
-                            <div class="col-6 mb-3">
-                                <div class="badge-card locked-badge">
-                                    <div class="badge-icon">
-                                        <i class="fas fa-recycle"></i>
-                                    </div>
-                                    <div class="badge-name">Primer Reciclaje</div>
-                                    <div class="badge-date">Por desbloquear</div>
+
+                                <div class="text-center mt-3">
+                                    <a href="#" id="toggleHistorial" class="text-success small">
+                                        <i class="fas fa-arrow-down me-1"></i> Ver todo el historial
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="text-center mt-2">
-                            <a href="#" class="text-success small">
-                                <i class="fas fa-award me-1"></i> Ver todos los logros
-                            </a>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="section-title">
+                                    <i class="fas fa-trophy me-2"></i> Mis Logros
+                                </h5>
+                                <p class="small text-muted">Has desbloqueado <span th:text="${logros}">1</span> de 15 logros</p>
+
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="badge-card">
+                                            <div class="badge-icon">
+                                                <i class="fas fa-user-plus"></i>
+                                            </div>
+                                            <div class="badge-name">Nuevo Miembro</div>
+                                            <div class="badge-date">Hoy</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6 mb-3">
+                                        <div class="badge-card locked-badge">
+                                            <div class="badge-icon">
+                                                <i class="fas fa-recycle"></i>
+                                            </div>
+                                            <div class="badge-name">Primer Reciclaje</div>
+                                            <div class="badge-date">Por desbloquear</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-2">
+                                    <a th:href="@{/api/logros}" class="text-success small">
+                                        <i class="fas fa-award me-1"></i> Ver todos los logros
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -770,111 +905,172 @@
         </div>
     </div>
 
+    <!-- Modal de Edición de Perfil -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="editProfileModalLabel">
-                        <i class="fas fa-user-edit me-2"></i> Completar Perfil
+                        <i class="fas fa-user-edit me-2"></i> Editar Perfil
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                
-                   <form id="profileForm" th:action="@{/perfil/actualizar}" method="post">
-    <div class="mb-3">
-        <label for="editNombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="editNombre" name="nombre" th:value="${usuario.nombre}">
-    </div>
-    
-    <div class="mb-3">
-        <label for="editEmail" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="editEmail" name="email" th:value="${usuario.email}" readonly>
-    </div>
-    
-    <div class="mb-3">
-        <label for="editTelefono" class="form-label">Teléfono</label>
-        <input type="tel" class="form-control" id="editTelefono" name="telefono" th:value="${usuario.telefono}">
-    </div>
-    
-    <div class="mb-3">
-        <label for="editDireccion" class="form-label">Dirección</label>
-        <input type="text" class="form-control" id="editDireccion" name="direccion" th:value="${usuario.direccion}">
-    </div>
-    
-    <hr>
-    
-    <h6 class="fw-bold mb-3">
-        <i class="fas fa-key me-2"></i> Cambiar contraseña (opcional)
-    </h6>
-    
-    <div class="mb-3">
-        <label for="currentPassword" class="form-label">Contraseña actual</label>
-        <div class="input-group">
-            <input type="password" class="form-control" id="currentPassword" name="currentPassword">
-            <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
-                <i class="fas fa-eye"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="mb-3">
-        <label for="newPassword" class="form-label">Nueva contraseña</label>
-        <div class="input-group">
-            <input type="password" class="form-control" id="newPassword" name="newPassword">
-            <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
-                <i class="fas fa-eye"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="mb-3">
-        <label for="confirmNewPassword" class="form-label">Confirmar nueva contraseña</label>
-        <div class="input-group">
-            <input type="password" class="form-control" id="confirmNewPassword" name="confirmPassword">
-            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmNewPassword">
-                <i class="fas fa-eye"></i>
-            </button>
-        </div>
-    </div>
-    
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">
-            <i class="fas fa-save me-1"></i> Guardar cambios
-        </button>
-    </div>
-</form>
-          
-                
+                    <form id="profileForm" th:action="@{/perfil/actualizar}" method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="profile-avatar-container mb-3" style="width: 150px; height: 150px; margin: 0 auto;">
+                                    <img id="profileAvatarPreview" th:src="${usuario.avatarId}" 
+                                         class="profile-avatar">
+                                    <label class="avatar-upload" for="avatarInput" title="Cambiar foto">
+                                        <i class="fas fa-camera"></i>
+                                    </label>
+                                </div>
+                                <input type="file" id="avatarInput" name="avatar" accept="image/*" class="d-none">
+                                <input type="hidden" id="hiddenAvatarId" name="avatarId" th:value="${usuario.avatarId}">
+                                <button type="button" id="removePhotoBtn" class="btn btn-outline-danger btn-sm mt-2">
+                                    <i class="fas fa-trash me-1"></i> Eliminar foto
+                                </button>
+                                <p class="small text-muted mt-2">Formatos soportados: JPG, PNG (Max. 2MB)</p>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="editNombre" class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control" id="editNombre" name="nombre" th:value="${usuario.nombre}" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="editEmail" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="editEmail" name="email" th:value="${usuario.email}" readonly>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editTelefono" class="form-label">Teléfono</label>
+                                        <input type="tel" class="form-control" id="editTelefono" name="telefono" th:value="${usuario.telefono}">
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="editDireccion" class="form-label">Dirección</label>
+                                    <textarea class="form-control" id="editDireccion" name="direccion" rows="2" th:text="${usuario.direccion}"></textarea>
+                                </div>
+                                
+                                <hr>
+                                
+                                <h6 class="fw-bold mb-3">
+                                    <i class="fas fa-key me-2"></i> Cambiar contraseña (opcional)
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="currentPassword" class="form-label">Contraseña actual</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">Nueva contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Mínimo 8 caracteres, incluyendo números y letras</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="confirmNewPassword" class="form-label">Confirmar nueva contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirmNewPassword" name="confirmPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmNewPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Guardar cambios
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal de Ejemplo -->
+    <div class="modal fade" id="nuevoModalEjemplo" tabindex="-1" aria-labelledby="nuevoModalEjemploLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="nuevoModalEjemploLabel">
+                        <i class="fas fa-plus-circle me-2"></i> Nueva Acción
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="tipoAccion" class="form-label">Tipo de acción</label>
+                            <select class="form-select" id="tipoAccion">
+                                <option selected disabled>Selecciona una opción</option>
+                                <option value="reciclaje">Reciclaje</option>
+                                <option value="voluntariado">Voluntariado</option>
+                                <option value="donacion">Donación</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcionAccion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcionAccion" rows="3" placeholder="Describe la acción realizada"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="fechaAccion" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fechaAccion">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="evidenciaAccion" class="form-label">Evidencia (opcional)</label>
+                            <input type="file" class="form-control" id="evidenciaAccion">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Registrar acción</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        // Obtener el email del usuario desde Thymeleaf para usarlo como semilla de DiceBear
-        // Usamos la sintaxis de inlining de JavaScript de Thymeleaf para un escape seguro.
+        // Obtener datos del usuario desde Thymeleaf
         const userEmail = /*[[${usuario.email ?: ''}]]*/ ''; 
-        
-        // Obtener el avatarId actual del usuario
-        // Usamos la sintaxis de inlining de JavaScript de Thymeleaf para un escape seguro.
         const currentAvatarId = /*[[${usuario.avatarId ?: ''}]]*/ ''; 
+        const dicebearStyle = "pixel-art";
 
-        // Estilo de DiceBear a utilizar (debe coincidir con el backend)
-        const dicebearStyle = "pixel-art"; // Asegúrate de que este estilo sea el mismo que en tu UsuarioServicio
-
-        // Función para generar una URL de DiceBear
+        // Función para generar URL de avatar
         function generateDiceBearUrl(seed) {
-            // Si la semilla está vacía, puedes usar una semilla genérica o un valor predeterminado
             const effectiveSeed = seed || 'default-user'; 
             return `https://api.dicebear.com/7.x/${dicebearStyle}/svg?seed=${effectiveSeed}`;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle sidebar on mobile
+            // Toggle sidebar
             const sidebarToggle = document.querySelector('.sidebar-toggle');
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
@@ -884,56 +1080,36 @@
                     sidebar.classList.toggle('sidebar-collapsed');
                     mainContent.classList.toggle('main-content-expanded');
                 });
-                
             }
             
-            // 2. NUEVO Código para manejar mensajes (añadir esto)
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        // Cerrar automáticamente después de 5 segundos
-        setTimeout(() => {
-            alert.classList.add('fade-out');
-            setTimeout(() => alert.remove(), 300);
-        }, 5000);
-        
-        // Cerrar al hacer clic en la X
-        alert.querySelector('.btn-close').addEventListener('click', function() {
-            alert.classList.add('fade-out');
-            setTimeout(() => alert.remove(), 300);
-        });
-    });
-
+            // Manejar alertas
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+                
+                alert.querySelector('.btn-close').addEventListener('click', function() {
+                    alert.classList.add('fade-out');
+                    setTimeout(() => alert.remove(), 300);
+                });
+            });
             
             // Avatar upload functionality
             const avatarInput = document.getElementById('avatarInput');
             const profileAvatarPreview = document.getElementById('profileAvatarPreview');
-            const currentAvatar = document.getElementById('currentAvatar'); // Avatar en la tarjeta de perfil
-            const navbarAvatar = document.querySelector('.navbar .dropdown img'); // Avatar en la navbar
+            const currentAvatar = document.getElementById('currentAvatar');
+            const navbarAvatar = document.querySelector('.navbar .dropdown img');
             const removePhotoBtn = document.getElementById('removePhotoBtn');
-            const hiddenAvatarIdInput = document.getElementById('hiddenAvatarId'); // Campo oculto para el avatarId
-
-            // Al cargar el modal, inicializar el preview con el avatar actual del usuario
-            // Esto es importante si el usuario ya tiene una foto subida o un DiceBear asignado
-            const editProfileModal = document.getElementById('editProfileModal');
-            if (editProfileModal) {
-                editProfileModal.addEventListener('show.bs.modal', function () {
-                    // Asegúrate de que el preview en el modal muestre el avatar actual del usuario
-                    // Si el currentAvatarId es nulo o vacío (lo cual no debería pasar con la lógica del backend),
-                    // se generará un DiceBear por defecto para el preview.
-                    profileAvatarPreview.src = currentAvatarId || generateDiceBearUrl(userEmail);
-                    hiddenAvatarIdInput.value = currentAvatarId || generateDiceBearUrl(userEmail); // Inicializa el hidden input
-                });
-            }
+            const hiddenAvatarIdInput = document.getElementById('hiddenAvatarId');
 
             if (avatarInput) {
                 avatarInput.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     if (file) {
                         if (file.size > 2 * 1024 * 1024) {
-                            // Reemplazar alert con un mensaje más amigable
-                            // alert('El archivo es demasiado grande. Máximo 2MB permitidos.');
                             showCustomAlert('El archivo es demasiado grande. Máximo 2MB permitidos.');
-                            // Limpiar el input de archivo para permitir al usuario seleccionar otro
                             e.target.value = '';
                             return;
                         }
@@ -942,16 +1118,11 @@
                         reader.onload = function(event) {
                             profileAvatarPreview.src = event.target.result;
                             currentAvatar.src = event.target.result;
-                            if (navbarAvatar) navbarAvatar.src = event.target.result; // Actualizar avatar en navbar
-                            // Cuando se sube un archivo, el campo oculto avatarId no es relevante
-                            // porque el backend procesará el archivo. Lo limpiamos para que el backend
-                            // sepa que hay un archivo nuevo y no intente usar el avatarId anterior.
-                            hiddenAvatarIdInput.value = ''; 
+                            if (navbarAvatar) navbarAvatar.src = event.target.result;
+                            hiddenAvatarIdInput.value = '';
                         };
                         reader.readAsDataURL(file);
                     } else {
-                        // Si el usuario abre el diálogo de archivo y luego cancela,
-                        // restaurar el avatar a lo que estaba antes de abrir el diálogo
                         profileAvatarPreview.src = hiddenAvatarIdInput.value || generateDiceBearUrl(userEmail);
                         currentAvatar.src = hiddenAvatarIdInput.value || generateDiceBearUrl(userEmail);
                         if (navbarAvatar) navbarAvatar.src = hiddenAvatarIdInput.value || generateDiceBearUrl(userEmail);
@@ -964,9 +1135,9 @@
                     const newDiceBearAvatarUrl = generateDiceBearUrl(userEmail);
                     profileAvatarPreview.src = newDiceBearAvatarUrl;
                     currentAvatar.src = newDiceBearAvatarUrl;
-                    if (navbarAvatar) navbarAvatar.src = newDiceBearAvatarUrl; // Actualizar avatar en navbar
-                    if (avatarInput) avatarInput.value = ''; // Limpiar el input de archivo
-                    hiddenAvatarIdInput.value = ''; // Indicar al backend que debe generar un DiceBear
+                    if (navbarAvatar) navbarAvatar.src = newDiceBearAvatarUrl;
+                    if (avatarInput) avatarInput.value = '';
+                    hiddenAvatarIdInput.value = '';
                 });
             }
             
@@ -997,30 +1168,80 @@
             const qrPlaceholder = document.querySelector('.qr-placeholder');
             if (qrPlaceholder) {
                 qrPlaceholder.addEventListener('click', function() {
-                    // alert('Simulación: Abriendo cámara para escanear QR. En una implementación real, esto activaría el escáner de QR del dispositivo.');
                     showCustomAlert('Simulación: Abriendo cámara para escanear QR. En una implementación real, esto activaría el escáner de QR del dispositivo.');
                 });
             }
             
-            // Mostrar mensaje de bienvenida si es un nuevo usuario
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('nuevo')) {
-                setTimeout(() => {
-                    // alert('¡Bienvenido a GreenCoin! Comienza completando tu perfil para ganar tus primeros puntos.');
-                    showCustomAlert('¡Bienvenido a GreenCoin! Comienza completando tu perfil para ganar tus primeros puntos.');
-                    const editProfileModalInstance = new bootstrap.Modal(document.getElementById('editProfileModal'));
-                    editProfileModalInstance.show();
-                }, 1000);
-            }
+            // Toggle historial de actividades
+            const toggleLink = document.getElementById('toggleHistorial');
+            const container = document.getElementById('actividades-container');
 
-            // Función para reemplazar alert con un modal de Bootstrap (o similar)
-            function showCustomAlert(message) {
-                // Aquí puedes implementar un modal de Bootstrap o un div personalizado
-                // Por simplicidad, usaremos un alert básico por ahora, pero se recomienda un modal
-                alert(message); 
+            toggleLink.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                if(container.style.maxHeight === 'none') {
+                    container.style.maxHeight = '200px';
+                    toggleLink.innerHTML = '<i class="fas fa-arrow-down me-1"></i> Ver todo el historial';
+                } else {
+                    container.style.maxHeight = 'none';
+                    toggleLink.innerHTML = '<i class="fas fa-arrow-up me-1"></i> Ver menos';
+                }
+            });
+            
+            // Validación del formulario de perfil
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmNewPassword').value;
+                    
+                    if (newPassword || confirmPassword) {
+                        if (newPassword.length < 8) {
+                            e.preventDefault();
+                            showCustomAlert('La nueva contraseña debe tener al menos 8 caracteres.');
+                            return;
+                        }
+                        
+                        if (newPassword !== confirmPassword) {
+                            e.preventDefault();
+                            showCustomAlert('Las contraseñas no coinciden.');
+                            return;
+                        }
+                    }
+                });
+            }
+            
+            // Función para mostrar alertas personalizadas
+            function showCustomAlert(message, type = 'info') {
+                const alertTypes = {
+                    'info': 'alert-info',
+                    'success': 'alert-success',
+                    'warning': 'alert-warning',
+                    'danger': 'alert-danger'
+                };
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${alertTypes[type]} alert-dismissible fade show`;
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+                    <i class="fas ${type === 'danger' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                document.body.appendChild(alertDiv);
+                
+                setTimeout(() => {
+                    alertDiv.classList.add('fade-out');
+                    setTimeout(() => alertDiv.remove(), 300);
+                }, 5000);
+                
+                alertDiv.querySelector('.btn-close').addEventListener('click', function() {
+                    alertDiv.classList.add('fade-out');
+                    setTimeout(() => alertDiv.remove(), 300);
+                });
             }
         });
     </script>
 </body>
-
 </html>

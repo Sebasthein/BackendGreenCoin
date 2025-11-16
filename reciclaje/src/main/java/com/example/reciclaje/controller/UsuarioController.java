@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -139,17 +140,18 @@ public class UsuarioController {
 	    /**
 	     * Obtener el perfil del usuario autenticado desde la sesión.
 	     */
-	    @GetMapping("/perfil")
-	    public ResponseEntity<Usuario> obtenerPerfilDesdeSesion(Authentication authentication) {
-	        if (authentication == null || !authentication.isAuthenticated()) {
-	            return ResponseEntity.status(401).build(); // No autenticado
+	    public ResponseEntity<?> getPerfil() {
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        
+	        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+	            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+	            Usuario usuario = userDetails.getUsuario();
+	            
+	            // Trabajar con tu entidad Usuario
+	            return ResponseEntity.ok(usuario);
 	        }
-
-	        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-	        Usuario usuario = usuarioService.obtenerPerfilPorEmail(userDetails.getUsername());
-	        return ResponseEntity.ok(usuario);
+	        
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	    }
-	    
-
 	    
 	}
