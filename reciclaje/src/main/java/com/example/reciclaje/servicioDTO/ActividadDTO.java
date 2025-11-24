@@ -3,24 +3,25 @@ package com.example.reciclaje.servicioDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class ActividadDTO {
 	
-	 private String descripcion; // Ejemplo: "Reciclaje de PET (3 unidades)"
-	    private int puntos;         // Ejemplo: 30 puntos
-	    private LocalDateTime FechaReciclaje;    // Ejemplo: 2025-05-29
+	private String descripcion;
+    private int puntos;
+    
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss") // Formato fecha para JSON
+    private LocalDateTime fecha; 
 
-	    private String nombreMaterial;
-	    private int cantidad;
-	    // Constructor
-	    public ActividadDTO(String descripcion, int puntos, LocalDateTime fecha) {
-	        this.descripcion = descripcion;
-	        this.puntos = puntos;
-	        this.FechaReciclaje = fecha;
-	    }
+    public ActividadDTO(String descripcion, int puntos, LocalDateTime fecha) {
+        this.descripcion = descripcion;
+        this.puntos = puntos;
+        this.fecha = fecha;
+    }
 
-	    // Getters y setters
-	    public String getDescripcion() { return descripcion; }
-	    public int getPuntos() { return puntos; }
-	    public LocalDateTime getFecha() { return FechaReciclaje; }
+    // Getters
+    public String getDescripcion() { return descripcion; }
+    public int getPuntos() { return puntos; }
+    public LocalDateTime getFecha() { return fecha; }
 
 }

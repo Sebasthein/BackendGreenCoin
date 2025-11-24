@@ -1,10 +1,19 @@
 package com.example.reciclaje.servicio;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.reciclaje.entidades.*;
 import com.example.reciclaje.repositorio.*;
@@ -12,7 +21,7 @@ import com.example.reciclaje.servicioDTO.ActividadDTO;
 import com.example.reciclaje.servicioDTO.MaterialScanResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.time.LocalDateTime;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +32,7 @@ public class ReciclajeServicio {
 	 // Asegúrate de que no haya duplicados si usas el mismo servicio para propósitos similares
     // private final OpenFoodFactsService openFoodFactsService_1; // Este parece ser un duplicado
     private final OpenFoodFactsService openFoodFactsService; // Mantén solo uno
-
+    private final String uploadDir = "uploads/reciclajes/";
     private final ReciclajeRepositorio reciclajeRepository;
     private final UsuarioServicio usuarioService;
     private final MaterialRepositorio materialRepository; // Usado para buscar/guardar materiales
@@ -35,6 +44,8 @@ public class ReciclajeServicio {
     private final MaterialServicio materialService; // Usado para buscar/crear materiales por tipo/nombre
 
     private final ObjectMapper objectMapper; // Inyecta ObjectMapper
+    
+    private FileStorageService fileStorageService;
 
     /**
      * Registra un reciclaje usando un ID de material existente.
@@ -282,6 +293,72 @@ public class ReciclajeServicio {
         }
     }
 
+    public Reciclaje registrarReciclajeConFoto(Usuario usuario, Long materialId, Double cantidad, MultipartFile foto) {
+        try {
+            System.out.println("🎯 Iniciando registro de reciclaje en servicio:");
+            System.out.println("   - Usuario: " + usuario.getEmail());
+            System.out.println("   - Material ID: " + materialId);
+            System.out.println("   - Cantidad: " + cantidad);
+            
+            // ✅ VALIDAR QUE EL MATERIAL EXISTA
+            Optional<Material> materialOpt = materialRepository.findById(materialId);
+            if (materialOpt.isEmpty()) {
+                System.out.println("❌ ERROR: Material no encontrado con ID: " + materialId);
+                throw new RuntimeException("Material no encontrado con ID: " + materialId);
+            }
+            
+            Material material = materialOpt.get();
+            System.out.println("✅ Material encontrado: " + material.getNombre());
+            
+            // 1. Guardar la imagen
+            String nombreArchivo = System.currentTimeMillis() + "_" + 
+                (foto.getOriginalFilename() != null ? foto.getOriginalFilename() : "reciclaje.jpg");
+            
+            Path rutaArchivo = Paths.get(uploadDir).resolve(nombreArchivo).normalize();
+            Files.createDirectories(rutaArchivo.getParent());
+            Files.copy(foto.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
+            
+            String rutaRelativa = "uploads/reciclajes/" + nombreArchivo;
+            System.out.println("✅ Imagen guardada: " + rutaRelativa);
+
+            // 2. Crear el objeto Reciclaje
+            Reciclaje reciclaje = new Reciclaje();
+            reciclaje.setUsuario(usuario);
+            reciclaje.setMaterial(material); // ✅ ESTO ES LO MÁS IMPORTANTE
+            reciclaje.setCantidad(cantidad.intValue()); // o
+            reciclaje.setCantidad((int) Math.round(cantidad));
+            reciclaje.setImagenUrl(rutaRelativa);
+            reciclaje.setFechaReciclaje(LocalDateTime.now());
+            reciclaje.setEstado(EstadoReciclaje.PENDIENTE);
+            reciclaje.setValidado(false);
+            
+            // ✅ Calcular puntos ganados
+            int puntosGanados = calcularPuntos(material, cantidad);
+            reciclaje.setPuntosGanados(puntosGanados);
+            
+            System.out.println("💾 Guardando reciclaje en BD...");
+            System.out.println("   - Material: " + reciclaje.getMaterial().getNombre());
+            System.out.println("   - Material ID: " + reciclaje.getMaterial().getId());
+            System.out.println("   - Puntos: " + puntosGanados);
+            
+            Reciclaje reciclajeGuardado = reciclajeRepository.save(reciclaje);
+            
+            System.out.println("✅ Reciclaje guardado exitosamente - ID: " + reciclajeGuardado.getId());
+            return reciclajeGuardado;
+            
+        } catch (Exception e) {
+            System.out.println("💥 Error en servicio registrarReciclajeConFoto: " + e.getMessage());
+            throw new RuntimeException("Error al registrar reciclaje: " + e.getMessage(), e);
+        }
+    }
+    
+    private int calcularPuntos(Material material, Double cantidad) {
+        // Lógica para calcular puntos basado en el material y cantidad
+        if (material.getPuntosPorUnidad() != null && cantidad != null) {
+            return (int) (material.getPuntosPorUnidad() * cantidad);
+        }
+        return 0;
+    }
   
     
     public long contarDiasActivosPorUsuario(Long usuarioId) {
@@ -310,7 +387,68 @@ public class ReciclajeServicio {
         return reciclajeRepository.findAll();
     }
 
-    public List<Reciclaje> obtenerReciclajesPendientes() {
+    public List<Reciclaje> obtenerReciclajesPendientesList() {
         return reciclajeRepository.findByValidadoFalse();
+    }
+    
+    public List<Reciclaje> obtenerReciclajesPendientes() {
+        return reciclajeRepository.findByEstadoOrderByFechaReciclajeAsc(EstadoReciclaje.PENDIENTE);
+    }
+    
+    // Obtener reciclajes por estado
+    public List<Reciclaje> obtenerReciclajesPorEstado(EstadoReciclaje estado) {
+        return reciclajeRepository.findByEstadoOrderByFechaReciclajeAsc(estado);
+    }
+    
+    // Validar (aprobar) reciclaje
+    public void validarReciclaje(Long reciclajeId, String emailValidador) {
+        Reciclaje reciclaje = reciclajeRepository.findById(reciclajeId)
+                .orElseThrow(() -> new RuntimeException("Reciclaje no encontrado"));
+        
+        Usuario validador = usuarioService.findByEmail(emailValidador);
+        
+        reciclaje.setEstado(EstadoReciclaje.VALIDADO);
+        reciclaje.setFechaValidacion(LocalDateTime.now());
+        reciclaje.setUsuarioValidador(validador);
+        reciclaje.setMotivoRechazo(null); // Limpiar motivo si existía
+        
+        // Asignar puntos al usuario
+        usuarioService.agregarPuntos(reciclaje.getUsuario().getId(), reciclaje.getPuntosGanados());
+        
+        reciclajeRepository.save(reciclaje);
+    }
+    
+    // Rechazar reciclaje
+    public void rechazarReciclaje(Long reciclajeId, String emailValidador, String motivoRechazo) {
+        Reciclaje reciclaje = reciclajeRepository.findById(reciclajeId)
+                .orElseThrow(() -> new RuntimeException("Reciclaje no encontrado"));
+        
+        Usuario validador = usuarioService.findByEmail(emailValidador);
+        
+        reciclaje.setEstado(EstadoReciclaje.RECHAZADO);
+        reciclaje.setFechaValidacion(LocalDateTime.now());
+        reciclaje.setUsuarioValidador(validador);
+        reciclaje.setMotivoRechazo(motivoRechazo);
+        
+        reciclajeRepository.save(reciclaje);
+    }
+    
+    // Obtener estadísticas para admin
+    public Map<String, Object> obtenerEstadisticasAdmin() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("pendientes", reciclajeRepository.countByEstado(EstadoReciclaje.PENDIENTE));
+        stats.put("validados", reciclajeRepository.countByEstado(EstadoReciclaje.VALIDADO));
+        stats.put("rechazados", reciclajeRepository.countByEstado(EstadoReciclaje.RECHAZADO));
+        stats.put("total", reciclajeRepository.count());
+        return stats;
+    }
+    
+    // Guardar reciclaje con foto
+    public Reciclaje guardarReciclajeConFoto(Reciclaje reciclaje, MultipartFile foto) {
+        if (foto != null && !foto.isEmpty()) {
+            String nombreArchivo = fileStorageService.storeFile(foto);
+            reciclaje.setImagenUrl(nombreArchivo);
+        }
+        return reciclajeRepository.save(reciclaje);
     }
 }

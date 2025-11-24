@@ -7,8 +7,10 @@ import java.util.Optional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.reciclaje.entidades.Reciclaje;
 import com.example.reciclaje.entidades.Usuario;
@@ -178,6 +180,69 @@ public class ReciclajeController {
 	        }
 	    }*/
 	    
+	    @PostMapping(value = "/registrar-con-foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	    public ResponseEntity<?> registrarReciclajeConFoto(
+	            @RequestParam("materialId") Long materialId,
+	            @RequestParam(value = "cantidad", defaultValue = "1.0") Double cantidad, // ✅ Cambiar a Double
+	            @RequestParam("foto") MultipartFile foto,
+	            Authentication authentication) {
+	        
+	        try {
+	            System.out.println("📸 --- INICIO REGISTRO CON FOTO ---");
+	            System.out.println("📦 Datos recibidos:");
+	            System.out.println("   - Material ID: " + materialId);
+	            System.out.println("   - Cantidad: " + cantidad);
+	            System.out.println("   - Foto: " + (foto != null ? foto.getOriginalFilename() : "null"));
+	            System.out.println("   - Tamaño: " + (foto != null ? foto.getSize() : 0) + " bytes");
+	            
+	            // ✅ VALIDACIONES CRÍTICAS
+	            if (materialId == null) {
+	                System.out.println("❌ ERROR: materialId es NULL");
+	                return ResponseEntity.badRequest().body(Map.of(
+	                    "error", "El materialId es requerido"
+	                ));
+	            }
+	            
+	            if (foto == null || foto.isEmpty()) {
+	                System.out.println("❌ ERROR: La foto es requerida");
+	                return ResponseEntity.badRequest().body(Map.of(
+	                    "error", "La foto es requerida"
+	                ));
+	            }
+	            
+	            String username = authentication.getName();
+	            Optional<Usuario> optionalUsuario = usuarioRepositorio.findByEmail(username);
+	            
+	            if (optionalUsuario.isEmpty()) {
+	                System.out.println("❌ ERROR: Usuario no encontrado: " + username);
+	                return new ResponseEntity<>("Usuario no encontrado.", HttpStatus.UNAUTHORIZED);
+	            }
+	            
+	            Usuario usuario = optionalUsuario.get();
+	            System.out.println("👤 Usuario ID: " + usuario.getId());
+
+	            // ✅ Llamar al servicio con los parámetros correctos
+	            Reciclaje reciclaje = reciclajeService.registrarReciclajeConFoto(usuario, materialId, cantidad, foto);
+	            
+	            System.out.println("✅ Reciclaje guardado - ID: " + reciclaje.getId());
+	            
+	            // ✅ Agregar puntos (si aplica)
+	            usuarioServicio.agregarPuntos(usuario.getId(), reciclaje.getPuntosGanados());
+
+	            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+	                "success", true,
+	                "message", "Reciclaje registrado exitosamente",
+	                "reciclajeId", reciclaje.getId(),
+	                "puntosGanados", reciclaje.getPuntosGanados()
+	            ));
+
+	        } catch (Exception e) {
+	            System.out.println("💥 ERROR en registrarReciclajeConFoto: " + e.getMessage());
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body(Map.of("error", "Error al subir el reciclaje", "details", e.getMessage()));
+	        }
+	    }
 	    
 
 	    @PreAuthorize("hasRole('ADMIN')")

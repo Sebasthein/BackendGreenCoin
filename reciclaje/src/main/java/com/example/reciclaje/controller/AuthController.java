@@ -67,15 +67,21 @@ public class AuthController {
 	}
 	
 	// Nuevo Endpoint REST para MAUI
-	@PostMapping("/api/auth/login")
+	
+	@PostMapping("/auth/login")
 	public ResponseEntity<Map<String, Object>> autenticarApi(@Valid @RequestBody LoginRequest loginRequest) {
 	    Map<String, Object> response = new HashMap<>();
+	    
+	    System.out.println("🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐");
+	    System.out.println("🔐 RECIBIENDO PETICIÓN EN /api/auth/login");
+	    System.out.println("🔐 Email: " + loginRequest.getEmail());
+	    System.out.println("🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐🔐");
+	    
 	    try {
 	        // 1. Autenticar usando las credenciales
 	        Authentication authentication = authenticationManager.authenticate(
 	                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 	        
-	        // ✅✅✅ LÍNEA CRÍTICA QUE FALTA - ESTABLECER CONTEXTO DE SEGURIDAD ✅✅✅
 	        SecurityContextHolder.getContext().setAuthentication(authentication);
 
 	        // 2. Generar el Token JWT
@@ -92,21 +98,27 @@ public class AuthController {
 	        response.put("usuario", usuarioDto);
 	        response.put("message", "Login exitoso");
 	        
-	        System.out.println("✅✅✅ LOGIN EXITOSO - Usuario: " + usuario.getEmail());
-	        System.out.println("✅✅✅ Contexto de seguridad establecido para: " + authentication.getName());
+	        System.out.println("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
+	        System.out.println("✅ LOGIN EXITOSO - Usuario: " + usuario.getEmail());
+	        System.out.println("✅ Token generado: " + token.substring(0, Math.min(20, token.length())) + "...");
+	        System.out.println("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅");
 
 	        return ResponseEntity.ok(response);
 
 	    } catch (BadCredentialsException e) {
+	        System.out.println("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
+	        System.out.println("❌ CREDENCIALES INVÁLIDAS: " + loginRequest.getEmail());
+	        System.out.println("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌");
 	        response.put("success", false);
 	        response.put("error", "Credenciales inválidas.");
-	        System.out.println("❌❌❌ CREDENCIALES INVÁLIDAS: " + loginRequest.getEmail());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	    } catch (Exception e) {
+	        System.out.println("💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥");
+	        System.out.println("💥 ERROR EN LOGIN: " + e.getMessage());
+	        e.printStackTrace();
+	        System.out.println("💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥");
 	        response.put("success", false);
 	        response.put("error", "Error interno: " + e.getMessage());
-	        System.out.println("❌❌❌ ERROR EN LOGIN: " + e.getMessage());
-	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
 	}
@@ -221,58 +233,49 @@ usuario.setTelefono(registroRequest.getTelefono());
 
 	// 👉 Página principal después del login
 	@GetMapping("/dashboard")
-	 public String dashboard(Model model, Principal principal) {
-		 Usuario usuario = usuarioServicio.findByEmail(principal.getName());
-		
+	public String dashboard(Model model, Principal principal) {
+	    // 1. Obtener usuario actual
+	    Usuario usuario = usuarioServicio.findByEmail(principal.getName());
 
-		
-		    // Obtener reciclajes del usuario
-		    List<Reciclaje> reciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId());
+	    // 2. Obtener reciclajes
+	    List<Reciclaje> reciclajes = reciclajeServicio.obtenerReciclajesPorUsuario(usuario.getId());
 
-		    // Calcular puntos totales obtenidos por reciclajes
-		    int puntos = reciclajes.stream()
-		            .mapToInt(Reciclaje::getPuntosGanados)
-		            .sum();
+	    // 3. Actualizar Nivel (solo verificación, no sumar puntos aquí)
+	    Usuario usuarioActualizado = usuarioServicio.actualizarNivelUsuario(usuario);
+	    
+	    // ⚠️ COMENTADO PARA EVITAR ERRORES: No sumes puntos al ver el dashboard. 
+	    // Los puntos se suman en el método de registrar reciclaje.
+	    // usuarioServicio.agregarPuntos(usuario.getId(), puntos); 
 
-		   
-		    // Actualizar nivel y puntos del usuario
-		    Usuario usuarioActualizado = usuarioServicio.actualizarNivelUsuario(usuario);
-		    usuarioServicio.agregarPuntos(usuario.getId(), puntos);
+	    // 4. Calcular Métricas
+	    long totalReciclajes = reciclajes.size();
+	    long diasActivos = reciclajeServicio.contarDiasActivosPorUsuario(usuario.getId());
+	    Long cantidadLogros = usuariologroReposiotry.countByUsuarioId(usuario.getId());
 
-		    // Obtener otros datos para el dashboard
-		    long totalReciclajes = reciclajes.size();
-		    long diasActivos = reciclajeServicio.contarDiasActivosPorUsuario(usuario.getId());
-		    Long cantidadLogros = usuariologroReposiotry.countByUsuarioId(usuario.getId());
+	    // 5. NUEVO: Calcular Posición en Ranking
+	    // Necesitas implementar este método en tu servicio (ver paso 2 abajo)
+	    int posicionRanking = usuarioServicio.obtenerPosicionRanking(usuario.getPuntos());
 
-		    // Crear lista de actividades recientes a mostrar
-		    List<ActividadDTO> actividadesRecientes = reciclajes.stream()
-		        .map(r -> new ActividadDTO(
-		            "Reciclaje de " + r.getMaterial().getNombre() + " (" + r.getCantidad() + " unidades)",
-		            r.getPuntosGanados(),
-		            r.getFechaReciclaje()
-		        ))
-		        .sorted((a, b) -> b.getFecha().compareTo(a.getFecha()))
-		        .toList();
+	    // 6. Actividades Recientes (Tu código original estaba bien aquí)
+	    List<ActividadDTO> actividadesRecientes = reciclajes.stream()
+	            .map(r -> new ActividadDTO(
+	                "Reciclaje de " + r.getMaterial().getNombre() + " (" + r.getCantidad() + " unidades)",
+	                r.getPuntosGanados(),
+	                r.getFechaReciclaje()
+	            ))
+	            .sorted((a, b) -> b.getFecha().compareTo(a.getFecha()))
+	            .limit(5) // Limitamos a las ultimas 5 para no saturar
+	            .toList();
 
-		    
-		  
+	    // 7. Enviar datos a la vista (Thymeleaf)
+	    model.addAttribute("usuario", usuarioActualizado); // Contiene nombre, nivel, puntos acumulados
+	    model.addAttribute("totalReciclajes", totalReciclajes);
+	    model.addAttribute("diasActivos", diasActivos);
+	    model.addAttribute("cantidadLogros", cantidadLogros);
+	    model.addAttribute("posicionRanking", posicionRanking); // Nueva variable
+	    model.addAttribute("actividadesRecientes", actividadesRecientes);
 
-		    // Crear lista final con registro + reciclajes
-		    List<ActividadDTO> actividades = new ArrayList<>();
-		    
-		   
-		    actividades.addAll(actividadesRecientes);
-
-		    // Agregar atributos al modelo
-		    model.addAttribute("logros", cantidadLogros);
-		    model.addAttribute("totalReciclajes", totalReciclajes);
-		    model.addAttribute("diasActivos", diasActivos);
-		    model.addAttribute("usuario", usuarioActualizado);
-		    model.addAttribute("actividadesRecientes", actividades);
-		   
-
-		    return "dashboard";
-		    
+	    return "dashboard";
 	}
 
 	// 👉 Página de acceso denegado

@@ -54,7 +54,7 @@ public class UsuarioServicio {
 
     // Método para generar la URL del avatar de DiceBear
     private String generarDiceBearAvatarUrl(String seed) {
-        return "https://api.dicebear.com/7.x/" + DICEBEAR_STYLE + "/svg?seed=" + seed;
+        return "https://api.dicebear.com/7.x/" + DICEBEAR_STYLE + "/png?seed=" + seed;
     }
 
     @Transactional
@@ -306,6 +306,16 @@ public class UsuarioServicio {
         return usuarioLogros.stream()
             .map(UsuarioLogro::getLogro)
             .collect(Collectors.toList());
+    }
+    
+    public int obtenerPosicionRanking(int puntosUsuarioActual) {
+        // Si hay 4 personas con más puntos que yo, yo soy el 5.
+        long personasMejores = usuarioRepository.countByPuntosGreaterThan(puntosUsuarioActual);
+        return (int) personasMejores + 1;
+    }
+    
+    public List<Usuario> obtenerTodosUsuarios() {
+        return usuarioRepository.findAll();
     }
     
    

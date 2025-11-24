@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,6 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	// Asumiendo que tu UserDetailsService está implementado (ej. CustomUserDetailsService)
     @Autowired
@@ -28,34 +30,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Este es el método principal que se ejecuta en cada petición
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        
-        try {
-            // 1. Obtener el Token JWT del encabezado
-            String jwt = getJwtFromRequest(request);
+    protected void doFilterInternal(HttpServletRequest request, 
+            HttpServletResponse response, 
+            FilterChain filterChain)
+throws ServletException, IOException {
 
-            // 2. Validar el token y obtener el usuario
-            if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
-                String username = jwtUtil.getUsernameFromToken(jwt);
+try {
+// 🔥 NO procesar JWT para endpoints públicos
+String path = request.getServletPath();
+if (path.startsWith("/api/auth/") || 
+path.startsWith("/auth/") || 
+path.equals("/login") || 
+path.equals("/registro")) {
+filterChain.doFilter(request, response);
+return;
+}
 
-                // 3. Cargar los detalles del usuario
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                
-                // 4. Crear el objeto de Autenticación
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+String token = getTokenFromRequest(request);
 
-                // 5. Establecer la Autenticación en el contexto de seguridad
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception ex) {
-            logger.error("No se pudo establecer la autenticación del usuario", ex);
-        }
+if (token != null && jwtUtil.validateToken(token)) {
+String username = jwtUtil.getUsernameFromToken(token);
+UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        filterChain.doFilter(request, response);
+UsernamePasswordAuthenticationToken authentication =
+  new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+SecurityContextHolder.getContext().setAuthentication(authentication);
+}
+} catch (Exception e) {
+logger.error("Cannot set user authentication: {}", e);
+}
+
+filterChain.doFilter(request, response);
+}
+
+private String getTokenFromRequest(HttpServletRequest request) {
+String bearerToken = request.getHeader("Authorization");
+if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+return bearerToken.substring(7);
+}
+return null;
+}
+
+    
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // Excluir la ruta de registro del filtro de validación de token
+        return request.getRequestURI().equals("/api/registro") || 
+               request.getRequestURI().equals("/api/auth/login");
     }
 
     // Método auxiliar para extraer el token del encabezado "Authorization: Bearer <token>"

@@ -40,6 +40,7 @@ public class UsuarioRol {
 	    private LocalDate fechaAsignacion = LocalDate.now();
 
 	    
+	    
 	 // Constructor para fácil creación
 		public UsuarioRol(Usuario usuario, Rol rol) {
 			super();
@@ -47,6 +48,12 @@ public class UsuarioRol {
 			this.rol = rol;
 		}
 
+		 public Boolean getActivo() {
+		        return this.activo;
+		    }
+		 
+		
+		  
 		public UsuarioRol(Rol rol) {
 			super();
 			this.rol = rol;

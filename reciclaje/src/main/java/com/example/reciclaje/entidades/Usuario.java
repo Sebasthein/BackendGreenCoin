@@ -63,7 +63,7 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "nivel_id")
     private Nivel nivel;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     private List<Reciclaje> reciclajes = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)

@@ -14,4 +14,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     boolean existsByEmail(String email);
 	boolean existsByNombre(String nombre);
 	
+	long countByPuntosGreaterThan(int puntos);
+	
 }

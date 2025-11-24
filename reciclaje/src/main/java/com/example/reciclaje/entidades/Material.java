@@ -28,7 +28,8 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-
+    private Usuario usuarioCreador;
+    
     @Column(name = "descripcion") // Mapea 'descripcion' en la DB a 'descripcion' en la entidad
     private String descripcion;   // ¡Cambio de 'description' a 'descripcion' para consistencia!
 
