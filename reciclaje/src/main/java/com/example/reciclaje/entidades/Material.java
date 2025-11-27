@@ -2,6 +2,9 @@ package com.example.reciclaje.entidades;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,11 +26,13 @@ import lombok.Setter;
 @Builder // Para poder construir objetos Material usando Material.builder()...build()
 @NoArgsConstructor // Necesario para JPA
 @AllArgsConstructor // Genera un constructor con todos los campos
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    @JsonIgnore
     private Usuario usuarioCreador;
     
     @Column(name = "descripcion") // Mapea 'descripcion' en la DB a 'descripcion' en la entidad
@@ -47,6 +52,7 @@ public class Material {
     private String codigoBarra;
 
     // Relación OneToMany con Reciclaje
+    @JsonIgnore
     @OneToMany(mappedBy = "material", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reciclaje> reciclajes;
 

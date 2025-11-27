@@ -1,9 +1,13 @@
 package com.example.reciclaje.controller;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
@@ -102,16 +106,39 @@ public class ReciclajeController {
 
 	    @PreAuthorize("hasAnyRole('ADMIN', 'MODERADOR')")
 	    @PutMapping("/validar/{id}")
-	    public ResponseEntity<?> validarReciclaje(@PathVariable Long id) {
+	    public ResponseEntity<?> validarReciclaje(@PathVariable Long id, Authentication authentication) {
 	        try {
-	            Reciclaje reciclajeValidado = reciclajeService.validarReciclaje(id);
-	            return ResponseEntity.ok(reciclajeValidado);
+	            String emailValidador = authentication.getName();
+	            reciclajeService.validarReciclaje(id, emailValidador);
+	            return ResponseEntity.ok(Map.of("message", "Reciclaje validado exitosamente"));
 	        } catch (Exception e) {
 	            System.err.println("Error al validar el reciclaje: " + e.getMessage());
 	            e.printStackTrace();
 	            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 	                    .body(Map.of(
 	                        "error", "Error al validar el reciclaje",
+	                        "details", e.getMessage()
+	                    ));
+	        }
+	    }
+
+	    @PreAuthorize("hasAnyRole('ADMIN', 'MODERADOR')")
+	    @PutMapping("/rechazar/{id}")
+	    public ResponseEntity<?> rechazarReciclaje(@PathVariable Long id, @RequestBody Map<String, String> body, Authentication authentication) {
+	        try {
+	            String emailValidador = authentication.getName();
+	            String motivoRechazo = body.get("motivoRechazo");
+	            if (motivoRechazo == null || motivoRechazo.trim().isEmpty()) {
+	                return ResponseEntity.badRequest().body(Map.of("error", "El motivo de rechazo es requerido"));
+	            }
+	            reciclajeService.rechazarReciclaje(id, emailValidador, motivoRechazo);
+	            return ResponseEntity.ok(Map.of("message", "Reciclaje rechazado exitosamente"));
+	        } catch (Exception e) {
+	            System.err.println("Error al rechazar el reciclaje: " + e.getMessage());
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	                    .body(Map.of(
+	                        "error", "Error al rechazar el reciclaje",
 	                        "details", e.getMessage()
 	                    ));
 	        }
@@ -270,6 +297,25 @@ public class ReciclajeController {
 	            e.printStackTrace();
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                    .body(Map.of("error", "Error al obtener reciclajes pendientes", "details", e.getMessage()));
+	        }
+	    }
+
+	    @GetMapping("/imagen/{filename}")
+	    @PreAuthorize("permitAll()")
+	    public ResponseEntity<Resource> obtenerImagen(@PathVariable String filename) {
+	        try {
+	            Path filePath = Paths.get(System.getProperty("user.dir"), "uploads", "reciclajes", filename);
+	            Resource resource = new FileSystemResource(filePath);
+
+	            if (resource.exists() && resource.isReadable()) {
+	                return ResponseEntity.ok()
+	                        .contentType(MediaType.IMAGE_JPEG) // o determinar dinámicamente
+	                        .body(resource);
+	            } else {
+	                return ResponseEntity.notFound().build();
+	            }
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	        }
 	    }
 }

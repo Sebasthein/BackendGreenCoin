@@ -3,6 +3,7 @@ package com.example.reciclaje.entidades;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,13 +29,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Reciclaje {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@JsonIgnore
-	 @ManyToOne
+	 @ManyToOne(fetch = FetchType.EAGER)
 	    @JoinColumn(name = "usuario_id", nullable = false)
 	    private Usuario usuario;
 
@@ -58,6 +59,13 @@ public class Reciclaje {
 	    
 	    @Column(name = "imagen_url")
 	    private String imagenUrl;
+	
+	    public String getImagenUrl() {
+	        if (imagenUrl != null && imagenUrl.startsWith("uploads/reciclajes/")) {
+	            return "/api/reciclajes/imagen/" + imagenUrl.substring("uploads/reciclajes/".length());
+	        }
+	        return imagenUrl;
+	    }
 	    
 	    @Enumerated(EnumType.STRING)
 	    @Column(name = "estado", nullable = false, columnDefinition = "varchar(255) default 'PENDIENTE'")

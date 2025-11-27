@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -34,6 +37,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario implements UserDetails {
 
     @Id
@@ -45,6 +49,7 @@ public class Usuario implements UserDetails {
     
     @EqualsAndHashCode.Include
     private String email;
+    @JsonIgnore
     private String password;
     private int puntos;
     
@@ -63,16 +68,16 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "nivel_id")
     private Nivel nivel;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     private List<Reciclaje> reciclajes = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<UsuarioRol> usuarioRoles = new HashSet<>();
-    
-    
 
     // Relación con Logros - Versión corregida
-
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private Set<UsuarioLogro> usuarioLogros = new HashSet<>();
     

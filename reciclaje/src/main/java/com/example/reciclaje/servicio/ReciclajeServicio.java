@@ -318,7 +318,7 @@ public class ReciclajeServicio {
             Files.createDirectories(rutaArchivo.getParent());
             Files.copy(foto.getInputStream(), rutaArchivo, StandardCopyOption.REPLACE_EXISTING);
             
-            String rutaRelativa = "uploads/reciclajes/" + nombreArchivo;
+            String rutaRelativa = "/api/reciclajes/imagen/" + nombreArchivo;
             System.out.println("✅ Imagen guardada: " + rutaRelativa);
 
             // 2. Crear el objeto Reciclaje

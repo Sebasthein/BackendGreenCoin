@@ -1,6 +1,8 @@
 package com.example.reciclaje.seguridad;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -55,7 +57,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/login", "/registro").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/img/**", "/plugins/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/img/**", "/plugins/**", "/uploads/**", "/api/reciclajes/imagen/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -71,7 +73,16 @@ public class SecurityConfig {
                 .permitAll()
             )
             .exceptionHandling(exception -> exception
-                .accessDeniedPage("/acceso-denegado")
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Acceso denegado\", \"status\": 403}");
+                })
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\": \"Autenticación requerida\", \"status\": 401}");
+                })
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
